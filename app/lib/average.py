@@ -85,20 +85,36 @@ class Average_service():
         print("getSeasonal")
         tempData = self.resultFormMongo
         tempAry = []
-        for i in tempData:
-            tempAry.append(i['data'])
+        # for i in tempData:
+        #     tempAry.append(i['data'])
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            tempAry = np.array(tempAry, dtype=np.float)
-            tempAry = np.nanmean(tempAry, axis= 0)
+        # with warnings.catch_warnings():
+        #     warnings.simplefilter("ignore", category=RuntimeWarning)
+        #     tempAry = np.array(tempAry, dtype=np.float)
+        #     tempAry = np.nanmean(tempAry, axis= 0)
         
-        meanSS = []
-        for tm in tempAry:
-            meanSS.append(np.nanmean(tm))
-        meanSS = np.array(meanSS)
-        print(time.time() - start)
-        return meanSS[:]
+        # meanSS = []
+        # for tm in tempAry:
+        #     meanSS.append(np.nanmean(tm))
+        # meanSS = np.array(meanSS)
+        # print(time.time() - start)
+        print("SSSSSSSSSSSSSSSSSSSSSSSSSS Long Code SSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+        print("--------------NO Custom")
+        for y in tempData:
+            dataYear = y['data']
+            dataYear = np.array(dataYear, dtype=np.float)
+            month = []
+            for m in range(1,len(dataYear)):
+                temp = dataYear[m]
+                value = np.nanmean(temp)
+                month.append(value)
+            tempAry.append(month)
+            
+        tempAry = np.array(tempAry, dtype=np.float)
+        tempAry = np.nanmean(tempAry, axis=0)
+        print(tempAry.shape)
+        
+        return tempAry
 
 
 # def year_ary(init,end):

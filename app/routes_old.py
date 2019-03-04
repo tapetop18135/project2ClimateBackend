@@ -51,18 +51,9 @@ def getmapAverage(type_dataset, yearInit, yearEnd, type_index):
     print("----------------------------------------------------",dataM)
     # df = pd.DataFrame(dataM)
     # df.fillna(-99.99, inplace=True)
-    
-    # print(np.count_nonzero(~np.isnan(dataM)))
+
     dataM[np.isnan(dataM)] = -99.99
-    # print(dataM.shape)
-    # count = 0
-    # for i in range(0,len(dataM)):
-    #     for j in range(0, len(dataM[i])):
-    #         if(dataM[i][j] != -99.99):
-    #             count += 1
-
-    # print(count)
-
+    print(dataM.shape)
     deatail = getDetail(collection)
     return jsonify(
         {
@@ -87,7 +78,7 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
 
     # SERVICE GET Seasonal Graph
     b = Average_service(ary, collection, month_IE[0], month_IE[1])
-    dataS = b.getSeasonal()
+    dataS = b.getSeasonal()[1:]
     
     # SERVICE GET Average Graph all
     c = Average_service(ary, collection, month_IE[0], month_IE[1])
@@ -185,7 +176,7 @@ def getmapHypoTrend(type_dataset, yearInit, yearEnd, type_index):
     )
 
 
-@app.route('/api/getdata/selectGraph/', methods=['POST'])
+@app.route('/api/getdata/selectGraph/', methods=['GET','POST'])
 def getSlectGraph():
     from .lib.selectservice import SelectCus_service
     if(request.method == 'POST'):
@@ -196,9 +187,7 @@ def getSlectGraph():
         yearEnd = data['yearEnd']
         type_index = data['type_index']
         custom = data['custom']
-        print("////////////////////////////////////")
-        # print(custom)
-        print("////////////////////////////////////")
+        # print("---------------\n",custom,"\n")
         print(f"getmapAverage : {type_dataset, yearInit, yearEnd, type_index}")
 
         ary, month_IE = year_ary(yearInit, yearEnd)
@@ -206,27 +195,24 @@ def getSlectGraph():
 
         obj = SelectCus_service(ary, collection, month_IE[0], month_IE[1])
         dataAll, yearAll  = obj.getAverageGraphCus(custom)
-        tempMedian = np.nanmedian(dataAll)
-        dataAll[np.isnan(dataAll)] = tempMedian
+        print(dataAll.shape)
 
         obj1 = SelectCus_service(ary, collection, month_IE[0], month_IE[1])
         dataA, year  = obj1.getAverageGraphCus(custom, 0)
-        tempMedian = np.nanmedian(dataA)
-        dataA[np.isnan(dataA)] = tempMedian
-
+        print(dataA.shape)
         print("AAAAAAAAAAAAA")
+
         obj2 = SelectCus_service(ary, collection, month_IE[0], month_IE[1])
         dataS  = obj2.getSeasonalCus(custom)
-        tempMedian = np.nanmedian(dataS)
-        dataS[np.isnan(dataS)] = tempMedian
+        print(dataS.shape)
 
         month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
         deatail = getDetail(collection)
         # pop lat lon
         deatail.pop('lat_list', None)
         deatail.pop('lon_list', None)
+        
         return jsonify(
-            # {"ssss":"ddddddddd"}
             {
                 "detail": deatail,
                 "graph":{
