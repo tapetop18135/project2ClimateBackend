@@ -57,50 +57,54 @@ def insertTomongo(data,col,detail,aryLatLon,yearInit):
     
 
     
-# location = "../dataset/ghcndex_current/GHCND_TXn_1951-2018_RegularGrid_global_2.5x2.5deg_LSmask.nc"
-# data = get_data(location)
-# detail = {
-#     "index_name": 0, # TXx
-#     "short_name": None, # Max Tmax
-#     "type_measure": None, # temperature
-#     "method": None, # intensity
-#     "unit": None, # °C def
-#     "dataset": 0, # ghcendex
-# }
-# insertTomongo(data,'ghcndex_TXn', 'ghcndex', 1951)
 
-# multi_insert file
-# basepath = "../dataset/ghcndex_current/"
-# # basepath = "../dataset/hadex2_current/"
-# files = os.listdir(basepath)
-# index = 0
-# month = ['Ann','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+########################### GHCNDEX ###########################
+basepath = "../dataset/ghcndex_current/"
+files = os.listdir(basepath)
+index = 0
+month = ['Ann','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
 
     
-# # for i in files:
-# #     name = i.split(".")
-# #     collect = name[0].split("_")[1]
-# #     print(collect)
-# #     dataset = 'ghcndex'
-# #     data, aryLatLon = get_data(f"{basepath}{i}")
-# #     detail = {
-# #         "index_name": collect, # TXx
-# #         "short_name": None, # Max Tmax
-# #         "type_measure": None, # temperature
-# #         "method": None, # intensity
-# #         "unit": None, # °C def
-# #         "dataset": dataset, # ghcendex
-# #     }
-# #     insertTomongo(data,f'ghcndex_{collect}', detail, aryLatLon, 1951)
-# #     index+=1
+for i in files:
+    name = i.split(".")
+    collect = name[0].split("_")[1]
+    print(collect)
+    dataset = 'ghcndex'
+    data, aryLatLon = get_data(f"{basepath}{i}")
+    detail = {
+        "index_name": collect, # TXx
+        "short_name": None, # Max Tmax
+        "type_measure": None, # temperature
+        "method": None, # intensity
+        "unit": None, # °C def
+        "dataset": dataset, # ghcendex
+    }
+    insertTomongo(data,f'ghcndex_{collect}', detail, aryLatLon, 1951)
+    index+=1
 
-# # print(index)
 
-# array = []
-# for i in files:
-#     name = i.split(".")
-#     collect = name[0].split("_")[1]
-#     array.append(collect)
-
-# print(array)
+########################### HADEX2 ###########################
+########################### HADEX2 ###########################
+########################### HADEX2 ###########################
+basepath = "../dataset/hadex2_current/"
+files = os.listdir(basepath)
+index = 0
+month = ['Ann','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    
+for i in files:
+    name = i.split(".")
+    collect = name[0].split("_")[1]
+    print(collect)
+    dataset = 'hadex2'
+    data, aryLatLon = get_data(f"{basepath}{i}")
+    detail = {
+        "index_name": collect, # TXx
+        "short_name": None, # Max Tmax
+        "type_measure": None, # temperature
+        "method": None, # intensity
+        "unit": None, # °C def
+        "dataset": dataset, # ghcendex
+    }
+    insertTomongo(data,f'hadex2_{collect}', detail, aryLatLon, 1901)
+    index+=1
