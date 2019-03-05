@@ -4,9 +4,9 @@ from .mongoDB import MongoDB_lc
 import time
 import warnings
 
-from netCDF4 import Dataset
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
+# from netCDF4 import Dataset
+# import matplotlib.pyplot as plt
+# from mpl_toolkits.basemap import Basemap
 
 class Trend_service():
 
@@ -23,7 +23,7 @@ class Trend_service():
         self.resultFormMongo = self.obj.mongo_find(self.aryYear)
 
     def __trendTime(self, diabetes_y_train):
-        import matplotlib.pyplot as plt
+        # import matplotlib.pyplot as plt
         import numpy as np
         from sklearn import datasets, linear_model
         from sklearn.metrics import mean_squared_error, r2_score
@@ -72,7 +72,7 @@ class Trend_service():
             aryLon = []
             hypoLon = []
             for j in range(0, nlon):
-                diabetes_y_train = dataTemp[21:,i,j]
+                diabetes_y_train = dataTemp[:,i,j]
                 diabetes_y_train = pd.DataFrame(diabetes_y_train).dropna()
                 if(not diabetes_y_train.values.tolist()):
                     aryLon.append(-99.9) ###############

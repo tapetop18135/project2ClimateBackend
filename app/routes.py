@@ -5,6 +5,7 @@ import numpy as np
 from .lib.mongoDB import MongoDB_lc
 import json
 import pandas as pd
+from .lib.linearRegressGen import Linear_regression
 
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -77,14 +78,17 @@ def getmapAverage(type_dataset, yearInit, yearEnd, type_index):
 def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
     from .lib.average import Average_service
     print(f"getSeasonalandAVG : {type_dataset, yearInit, yearEnd, type_index}")
-
+    
     ary, month_IE = year_ary(yearInit, yearEnd)
     collection = f"{type_dataset}_{type_index}"
 
     # SERVICE GET Average Graph Ann
     a = Average_service(ary, collection, month_IE[0], month_IE[1])
     dataA, year  = a.getAverageGraph(0)
-
+    
+    regAVG_ann = Linear_regression(dataA)
+    dataTrend_ann = regAVG_ann.predict_linear()
+    
     # SERVICE GET Seasonal Graph
     b = Average_service(ary, collection, month_IE[0], month_IE[1])
     dataS = b.getSeasonal()
@@ -92,6 +96,9 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
     # SERVICE GET Average Graph all
     c = Average_service(ary, collection, month_IE[0], month_IE[1])
     dataAll, yearAll  = c.getAverageGraph()
+
+    regAVG_all = Linear_regression(dataAll)
+    dataTrend_all = regAVG_all.predict_linear()
 
     deatail = getDetail(collection)
     month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
@@ -103,6 +110,7 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
             "detail": deatail,
             "graph":{
                 "graphAVGAnn": {
+                    "TaxisY": dataTrend_ann.tolist(),
                     "axisX":year,
                     "axisY":dataA.tolist()
                 },
@@ -111,6 +119,7 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
                     "axisY":dataS.tolist()
                 },
                 "graphAVG": {
+                    "TaxisY": dataTrend_all.tolist(),
                     "axisX":yearAll,
                     "axisY":dataAll.tolist()
                 },
@@ -225,12 +234,20 @@ def getSlectGraph():
         # pop lat lon
         deatail.pop('lat_list', None)
         deatail.pop('lon_list', None)
+
+        regAVG_all = Linear_regression(dataAll)
+        dataTrend_all = regAVG_all.predict_linear()
+
+        regAVG_ann = Linear_regression(dataA)
+        dataTrend_ann = regAVG_ann.predict_linear()
+
         return jsonify(
             # {"ssss":"ddddddddd"}
             {
                 "detail": deatail,
                 "graph":{
                     "graphAVGAnn": {
+                        "TaxisY": dataTrend_ann.tolist(),
                         "axisX":year,
                         "axisY":dataA.tolist()
                     },
@@ -239,6 +256,7 @@ def getSlectGraph():
                         "axisY":dataS.tolist()
                     },
                     "graphAVG": {
+                        "TaxisY": dataTrend_all.tolist(),
                         "axisX":yearAll,
                         "axisY":dataAll.tolist()
                     },
