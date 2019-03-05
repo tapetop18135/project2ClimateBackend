@@ -86,8 +86,8 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
     a = Average_service(ary, collection, month_IE[0], month_IE[1])
     dataA, year  = a.getAverageGraph(0)
     
-    regAVG_ann = Linear_regression(dataA)
-    dataTrend_ann = regAVG_ann.predict_linear()
+    # regAVG_ann = Linear_regression(dataA)
+    # dataTrend_ann = regAVG_ann.predict_linear()
     
     # SERVICE GET Seasonal Graph
     b = Average_service(ary, collection, month_IE[0], month_IE[1])
@@ -97,14 +97,25 @@ def getSeasonalandAVG(type_dataset, yearInit, yearEnd, type_index):
     c = Average_service(ary, collection, month_IE[0], month_IE[1])
     dataAll, yearAll  = c.getAverageGraph()
 
-    regAVG_all = Linear_regression(dataAll)
-    dataTrend_all = regAVG_all.predict_linear()
+    # regAVG_all = Linear_regression(dataAll)
+    # dataTrend_all = regAVG_all.predict_linear()
 
     deatail = getDetail(collection)
     month = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     # pop lat lon
     deatail.pop('lat_list', None)
     deatail.pop('lon_list', None)
+
+    try:
+        regAVG_all = Linear_regression(dataAll)
+        dataTrend_all = regAVG_all.predict_linear()
+    except:
+        dataTrend_all = np.array([])
+
+    regAVG_ann = Linear_regression(dataA)
+    dataTrend_ann = regAVG_ann.predict_linear()
+
+
     return jsonify(
         {
             "detail": deatail,
@@ -134,24 +145,30 @@ def getmapPCA(type_dataset, yearInit, yearEnd, type_index):
     ary, month_IE = year_ary(yearInit, yearEnd)
     collection = f"{type_dataset}_{type_index}"
 
+    pca_eofs = []
     # SERVICE GET PCA map and graph
     obj = Pca_service(ary, collection, month_IE[0], month_IE[1])
     comp = 6
-    pca_pc, pca_eofs, pca_va_ratio =  obj.getPCA_service(comp)
-
-    ratioX = np.linspace(1, comp, num=comp)
+    try:
+        pca_pc, pca_eofs, pca_va_ratio =  obj.getPCA_service(comp)
+        ratioX = np.linspace(1, comp, num=comp)
+        date = obj.date
+        print(pca_va_ratio.shape)
+        print(ratioX)
+    except:
+        pca_pc, pca_va_ratio, ratioX = np.array([[],[],[]])
+        date = []
+    
     
     # dataM[np.isnan(dataM)] = -99.99
 
-    print(pca_va_ratio.shape)
-    print(ratioX)
     deatail = getDetail(collection)
     return jsonify(
         {
             "detail": deatail,
             "graph":{
                 "time":{
-                    "axisX":obj.date, # chnage
+                    "axisX":date, # chnage
                     "axisY":pca_pc.tolist()
                 },
                 "ratio":{
@@ -235,8 +252,11 @@ def getSlectGraph():
         deatail.pop('lat_list', None)
         deatail.pop('lon_list', None)
 
-        regAVG_all = Linear_regression(dataAll)
-        dataTrend_all = regAVG_all.predict_linear()
+        try:
+            regAVG_all = Linear_regression(dataAll)
+            dataTrend_all = regAVG_all.predict_linear()
+        except:
+            dataTrend_all = np.array([])
 
         regAVG_ann = Linear_regression(dataA)
         dataTrend_ann = regAVG_ann.predict_linear()
